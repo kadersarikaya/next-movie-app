@@ -13,10 +13,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <DashboardLayout>
+        <DashboardLayout />
           {children}
-        </DashboardLayout>
-      </body>
+      </body> 
     </html>
   )
 }

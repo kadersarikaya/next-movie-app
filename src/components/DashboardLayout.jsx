@@ -1,128 +1,177 @@
-'use client';
-import React, {useState} from "react";
-import {
-    AppBar,
-    Toolbar,
-    Typography,
-    Drawer,
-    List,
-    ListItem,
-    ListItemIcon,
-    ListItemText,
-    IconButton,
-    useTheme,
-    useMediaQuery,
-    Box,
-} from "@mui/material";
+"use client";
+import React from 'react';
+import { styled, alpha } from '@mui/material/styles';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import InputBase from '@mui/material/InputBase';
 import MenuIcon from '@mui/icons-material/Menu';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
-import { styled } from '@mui/material/styles';
-import { useRouter } from 'next/navigation'; // Next.js router'ı içe aktar
+import SearchIcon from '@mui/icons-material/Search';
+import Box from '@mui/material/Box';
+import SwipeableDrawer from '@mui/material/SwipeableDrawer';
+import List from '@mui/material/List';
+import Divider from '@mui/material/Divider';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import LiveTvIcon from '@mui/icons-material/LiveTv';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
+import MovieIcon from '@mui/icons-material/Movie';
+import { useRouter } from 'next/navigation';
 
-const drawerWidth = 240;
-const StyledAppBar = styled(AppBar)(({ theme }) => ({
-    zIndex: theme.zIndex.drawer + 1,
+const Search = styled('div')(({ theme }) => ({
+  position: 'relative',
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  '&:hover': {
+    backgroundColor: alpha(theme.palette.common.white, 0.25),
+  },
+  marginLeft: 0,
+  width: '100%',
+  [theme.breakpoints.up('sm')]: {
+    marginLeft: theme.spacing(1),
+    width: 'auto',
+  },
 }));
 
-const StyledDrawer = styled(Drawer)(({ theme, open }) => ({
-    width: drawerWidth,
-    flexShrink: 0,
-    '& .MuiDrawer-paper': {
-        width: drawerWidth,
-        boxSizing: 'border-box',
-        marginTop: open ? theme.mixins.toolbar.minHeight : 0,
-        [theme.breakpoints.up('sm')]: {
-            marginTop: theme.mixins.toolbar[theme.breakpoints.up('sm')].minHeight,
-        },
+const SearchIconWrapper = styled('div')(({ theme }) => ({
+  padding: theme.spacing(0, 2),
+  height: '100%',
+  position: 'absolute',
+  pointerEvents: 'none',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: 'inherit',
+  '& .MuiInputBase-input': {
+    padding: theme.spacing(1, 1, 1, 0),
+    // vertical padding + font size from searchIcon
+    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    transition: theme.transitions.create('width'),
+    width: '100%',
+    [theme.breakpoints.up('sm')]: {
+      width: '12ch',
+      '&:focus': {
+        width: '20ch',
+      },
     },
+  },
 }));
 
-const DashboardLayout = ({children}) => {
-    const theme = useTheme();
-    const router = useRouter();
-    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-    const [mobileOpen, setMobileOpen] = useState(false);
-    const handleDrawerToggle = () => {
-        setMobileOpen(!mobileOpen);
-    };
+export default function DashboardLayout() {
+  const router = useRouter();
 
-    // Menü öğesine tıklandığında rotaya yönlendirme yapacak fonksiyon
-    const handleListItemClick = (path) => {
-        router.push(path);
-        if (isMobile) {
-            setMobileOpen(false);
-        }
+  const handleListItemClick = (path) => {
+    router.push(path);
+  };
+
+  const menuItems = [
+    {
+      text: 'TV Shows',
+      icon: <LiveTvIcon />,
+      path: '/tv-series',
+    },
+    {
+      text: 'Movies',
+      icon: <MovieIcon />,
+      path: '/movies',
+    },
+    {
+      text: 'Watch Later',
+      icon: <BookmarkIcon />,
+      path: '/watch-later',
     }
-    // Menü öğeleri ve rotaları eşleştirme
-    const menuItems = [
-        { name: 'Movies', path: '/movies' },
-        { name: 'Watch Later', path: '/watch-later' },
-    ];
+  ]
+  const [state, setState] = React.useState({
+    top: false,
+    left: false,
+    bottom: false,
+    right: false,
+  });
 
-    const handleTitleClick = () => {
-        router.push('/'); // Ana sayfaya yönlendirme
-    };
+  const toggleDrawer = (anchor, open) => (event) => {
+    if (
+      event &&
+      event.type === 'keydown' &&
+      (event.key === 'Tab' || event.key === 'Shift')
+    ) {
+      return;
+    }
 
-    const drawerContent = (
-        <List>
-            {menuItems.map((item) => (
-                <ListItem
-                    button
-                    key={item.name}
-                    onClick={() => handleListItemClick(item.path)}
-                >
-                    <ListItemIcon>
-                        {item.name === 'Movies' ? <InboxIcon /> : <MailIcon />}
-                    </ListItemIcon>
-                    <ListItemText primary={item.name} />
-                </ListItem>
-            ))}
+    setState({ ...state, [anchor]: open });
+  };
+
+  const list = (anchor) => (
+    <Box
+      sx={{ width: 250 }}
+      role="presentation"
+      onClick={toggleDrawer(anchor, false)}
+      onKeyDown={toggleDrawer(anchor, false)}
+    >
+      {menuItems.map((item, index) => (
+        <List key={index} >
+          <ListItem disablePadding>
+            <ListItemButton onClick={() => handleListItemClick(item.path)} >
+              <ListItemIcon>
+                {item.icon}
+              </ListItemIcon>
+              <ListItemText primary={item.text} />
+            </ListItemButton>
+          </ListItem>
+          <Divider />
         </List>
-    );
+      ))}
+    </Box>
+  );
 
-    return (
-        <Box sx={{ display: 'flex' }}>
-            <StyledAppBar position="fixed">
-                <Toolbar>
-                    {isMobile && (
-                        <IconButton
-                            color="inherit"
-                            aria-label="open drawer"
-                            edge="start"
-                            onClick={handleDrawerToggle}
-                            sx={{ mr: 2, display: { sm: 'none' } }}
-                        >
-                            <MenuIcon />
-                        </IconButton>
-                    )}
-                    <Typography
-                        variant="h6"
-                        noWrap
-                        component="div"
-                        onClick={handleTitleClick}
-                        sx={{ cursor: 'pointer' }}
-                    >
-                        Movie App
-                    </Typography>
-                </Toolbar>
-            </StyledAppBar>
-            <StyledDrawer
-                variant={isMobile ? 'temporary' : 'permanent'}
-                open={mobileOpen}
-                onClose={handleDrawerToggle}
-                ModalProps={{
-                    keepMounted: true, // Better open performance on mobile.
-                }}
+
+  return (
+    <>
+      <Box sx={{ flexGrow: 1 }}>
+        <AppBar position="static">
+          <Toolbar>
+            <IconButton
+              size="large"
+              edge="start"
+              color="inherit"
+              aria-label="open drawer"
+              sx={{ mr: 2 }}
             >
-                {drawerContent}
-            </StyledDrawer>
-            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-                <Toolbar />
-                {children}
-            </Box>
-        </Box>
-    )
-};
-
-export default DashboardLayout;
+              <MenuIcon onClick={toggleDrawer('left', true)} />
+              <SwipeableDrawer
+                anchor={'left'}
+                open={state['left']}
+                onClose={toggleDrawer('left', false)}
+                onOpen={toggleDrawer('left', true)}
+              >
+                {list('left')}
+              </SwipeableDrawer>
+            </IconButton>
+            <Typography
+              variant="h6"
+              noWrap
+              component="div"
+              sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
+            >
+              Trend Movies & TV Shows
+            </Typography>
+            <Search>
+              <SearchIconWrapper>
+                <SearchIcon />
+              </SearchIconWrapper>
+              <StyledInputBase
+                placeholder="Search…"
+                inputProps={{ 'aria-label': 'search' }}
+              />
+            </Search>
+          </Toolbar>
+        </AppBar>
+      </Box>
+    </>
+  );
+}
