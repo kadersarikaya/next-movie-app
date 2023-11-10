@@ -1,11 +1,12 @@
 "use client"
 import Image from 'next/image'
 import "./globals.css"
+import TrendContent from '@/components/TrendContent'
 
 export default function Home() {
   return (
     <main>
-      <h1>Next.js + Vercel</h1>
+      <TrendContent type='movie' />
     </main>
   )
 }
