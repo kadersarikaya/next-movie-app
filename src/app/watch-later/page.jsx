@@ -1,70 +1,69 @@
 "use client"
 import React, {useState, useEffect, useCallback, useMemo} from "react";
-import { getTrendMovies } from "../api"; 
 import { Typography, Stack } from "@mui/material";
 import InfoCard from "@/components/InfoCard";
 import Box from '@mui/material/Box';
+import { getTrendMovies } from "../api";
 
 const WatchLater = () => {
-  const [movies, setMovies] = useState([]);
   const [watchLaters, setWatchLaters] = useState([]);
+  const [movies, setMovies] = useState([])
+  const [tvs, setTvs] = useState([])
 
-  const getMovies = async () => {
-    const response = await getTrendMovies('movie');
-    setMovies(response);
-  };
-  const watchLaterMovies = movies.filter((movie)=>
-    watchLaters.includes(movie.id)
-  )
-
-  useEffect(()=> {
-    getMovies();
+  useEffect(() => {
+    getTrendMovies('movie').then((response) => {
+      setMovies(response)
+    })
+    getTrendMovies('tv').then((response) => {
+      setTvs(response)
+    })
     const storedWatchLaters = JSON.parse(localStorage.getItem('watchLaters'));
-    if(storedWatchLaters){
+    if (storedWatchLaters) {
       setWatchLaters(storedWatchLaters);
     }
-  }, []);
+  }, [])
 
-  const handleWatchLater = useCallback(
-    (id) => {
-      const newWatchLaters = watchLaters.includes(id)
-        ? watchLaters.filter((movieId) => movieId !== id)
-        : [...watchLaters, id];
+  const allContent = useMemo(() => {
+    return [...movies, ...tvs]
+  }
+  , [movies, tvs])
 
-      setWatchLaters(newWatchLaters);
-      localStorage.setItem('watchLaters', JSON.stringify(newWatchLaters));
-    },
-    [watchLaters]
-    );
+   const handleWatchLater = (id) => {
+    const newWatchLaters = watchLaters.includes(id)
+      ? watchLaters.filter((movieId) => movieId !== id)
+      : [...watchLaters, id];
 
-  const isWatchLater = (id) => watchLaters.includes(id)
+    setWatchLaters(newWatchLaters);
+    localStorage.setItem('watchLaters', JSON.stringify(newWatchLaters))
+  }
 
-  const watchMovieCount = useMemo(()=> {
-    return movies.filter((movie)=> watchLaters.includes(movie.id))
-    .length
-  }, [movies, watchLaters])
+   const isWatchLater = (id) => watchLaters.includes(id)
+
+  const FavoriteMovies = allContent.filter(
+    (movie) => watchLaters.includes(movie.id)
+  )
+
+  const watchMovieCount = useMemo(() => {
+    return watchLaters.length;
+  }, [watchLaters]);
 
   return (
     <Stack sx={{ width: 1, margin: "20 auto", padding: "1em 5em" }}
      spacing={2}>
       <Typography variant="h5">Your Watch List</Typography>
       <Typography> Total: {watchMovieCount}</Typography>
-      <Stack
-        spacing={{ xs: 1, sm: 2 }}
-        direction="row"
-        useFlexGap
-        flexWrap="wrap"
+      <Box 
+        sx={{ display: "flex", flexWrap: "wrap", justifyContent: "start", gap: "1em" }}  
       >
-        {watchLaterMovies.map((movie) => (
-          <Box gridColumn="span 4">
-            <InfoCard
-              movie={movie}
-              isWatchLater={isWatchLater}
-              handleWatchLater={handleWatchLater}
-            />
-          </Box>
+        {FavoriteMovies.map((id) => (
+          <InfoCard
+            movie={id}
+            isWatchLater={isWatchLater}
+            handleWatchLater={handleWatchLater}
+            dontShowDetail={true}
+          />
         ))}
-      </Stack>
+      </Box>
     </Stack>
   );
 };

@@ -13,23 +13,36 @@ const InfoCard = ({
   handleMovieDetail,
   handleWatchLater,
   isWatchLater,
+  dontShowDetail
 }) => {
   return (
     <>
       <Card key={movie.id} sx={{ maxWidth: 345 }}>
         <IsSkeleton loading={loading} variant="rectangular" width={345} height={500}>
-          <CardMedia
+          {movie.poster_path ?
+            <CardMedia
             component="img"
             alt="green iguana"
             width={345}
             height={500}
             image={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
           />
+          :
+          <CardMedia
+            component="img"
+            alt="green iguana"
+            width={345}
+            height={500}
+            image="https://via.placeholder.com/500x750"
+          />
+          }
         </IsSkeleton>
         <CardContent>
           <IsSkeleton loading={loading} variant="text" width={250} height={50}>
             <Typography gutterBottom variant="h5" component="div">
-              {movie.title}
+              {
+                movie.title || movie.name
+              }
             </Typography>
           </IsSkeleton>
           <IsSkeleton loading={loading} variant="text" width={300} height={100}>
@@ -40,11 +53,13 @@ const InfoCard = ({
         </CardContent>
         <CardActions sx={{display:'flex', justifyContent:'space-between' }} >
           <IsSkeleton loading={loading} variant="rounded" width={70} height={30}>
-            <Button 
+            {!dontShowDetail &&
+              <Button 
               size="small"
               onClick={() => handleMovieDetail(movie.id)}
             >Learn More
             </Button>
+            }
           </IsSkeleton>
           <IsSkeleton loading={loading} variant="circular" width={40} height={40}>
             {isWatchLater && (

@@ -5,7 +5,7 @@ import "./globals.css"
 export default function Home() {
   return (
     <main>
-      <h1>Trend Movies</h1>
+      <h1>Next.js + Vercel</h1>
     </main>
   )
 }
