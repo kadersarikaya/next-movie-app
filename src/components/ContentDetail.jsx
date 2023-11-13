@@ -21,7 +21,6 @@ const ContentDetail = ({type}) => {
     const handleContentDetail = (id) => {
         router.push(`/${type}/${id}`)
     }
-    
 
     useEffect(() => {
         const fetchContentData = async () => {
@@ -63,11 +62,12 @@ const ContentDetail = ({type}) => {
   }
 
     return (
-        <Box sx={{ width: 1, margin: "10 auto", padding: "1em 5em" }}>  
+        <Box sx={{ padding: 2, minHeight: '100vh' }} >  
             <Box sx={{ display: "flex", justifyContent: "center", gap: "1em",
             alignItems: "center", flexWrap:"wrap" }}>     
                 {content.poster_path ?
-                    <img style={{borderRadius:10, marginBottom: 10}} src={`https://image.tmdb.org/t/p/w500/${content.poster_path}`} alt={content.title} />
+                    <img style={{maxWidth: "100%", width: { xs: '100%', sm: '100%', md: '50%', lg: '50%' },
+                        borderRadius:10, marginBottom: 10}} src={`https://image.tmdb.org/t/p/w500/${content.poster_path}`} alt={content.title} />
                     : <img style={{ borderRadius: 10, marginBottom: 10 }} src="https://via.placeholder.com/500x750" alt="placeholder" />}
                 <Stack sx={{textAlign:"center", 
                 width:  { xs: '100%', sm: '100%', md: '50%', lg: '50%' }

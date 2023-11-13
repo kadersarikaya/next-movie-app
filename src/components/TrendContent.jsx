@@ -99,9 +99,16 @@ const TrendContent = ({type}) => {
     const isWatchLater = (id) => watchLaters.includes(id)
 
     return (
-        <Box sx={{ width: 1, margin: "20 auto", padding: "1em 5em" }}>
-            <Typography sx={{ paddingBottom: 2 }} variant="h5">
-            </Typography>
+        <Box sx={
+            {
+                flexGrow: 1,
+                padding: 2,
+                paddingTop: 4,
+                paddingBottom: 4,
+                backgroundColor: '#1F1F1F',
+                minHeight: '100vh'
+            }
+        } >
             <Grid container spacing={2}>
                 {loading ?
                     Array.from({ length: 20 }).map((_, index) => {

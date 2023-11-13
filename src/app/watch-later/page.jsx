@@ -48,8 +48,17 @@ const WatchLater = () => {
   }, [watchLaters]);
 
   return (
-    <Stack sx={{ width: 1, margin: "20 auto", padding: "1em 5em" }}
-     spacing={2}>
+    <Stack
+      sx={
+        {
+          flexGrow: 1,
+          padding: 2,
+          paddingTop: 4,
+          paddingBottom: 4,
+          minHeight: '100vh'
+        }
+      }
+    >
       <Typography variant="h5">Your Watch List</Typography>
       <Typography> Total: {watchMovieCount}</Typography>
       <Grid container spacing={2} >

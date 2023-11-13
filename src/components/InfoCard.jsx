@@ -17,7 +17,9 @@ const InfoCard = ({
 }) => {
   return (
     <>
-      <Card key={movie.id} sx={{ maxWidth: 345 }}>
+      <Card key={movie.id} sx={{ maxWidth: "100%" }} md={{
+        maxWidth: 345,
+      }}>
           {movie.poster_path ?
             <CardMedia
             component="img"
@@ -42,10 +44,10 @@ const InfoCard = ({
               }
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              {movie.overview.slice(0, 100)}... (Read More)
+              {movie.overview.slice(0, 100)}... 
             </Typography>
         </CardContent>
-        <CardActions sx={{display:'flex', justifyContent:'space-between' }} >
+        <CardActions sx={{display:'flex', justifyContent:"space-between"}} >
             {!dontShowDetail &&
               <Button 
               size="small"
