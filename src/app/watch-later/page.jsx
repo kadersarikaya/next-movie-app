@@ -25,10 +25,9 @@ const WatchLater = () => {
   }, [])
 
   const allContent = useMemo(() => {
-    return [...movies, ...tvs]
-  }
-  , [movies, tvs])
-
+    return [...movies, ...tvs];
+  }, [movies, tvs])
+  
    const handleWatchLater = (id) => {
     const newWatchLaters = watchLaters.includes(id)
       ? watchLaters.filter((movieId) => movieId !== id)

@@ -26,6 +26,16 @@ export const getMovie = async (type, id) => {
     }
 }
 
+export const searchMovies = async (type, query) => {
+    try {
+        const response = await axiosInstance.get(`search/${type}?api_key=4bff102e133b1408d03aba87d5056132&query=${query}`)
+        return response.data.results
+    }
+    catch (error) {
+        console.log(error)
+    }
+}
+
 export const getRecommendations = async (type, id) => {
     try {
         const response = await axiosInstance.get(`${type}/${id}/recommendations?api_key=4bff102e133b1408d03aba87d5056132`)

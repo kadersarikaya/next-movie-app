@@ -19,14 +19,7 @@ const IsSkeleton = () => {
           height={50}
         />
         <Box
-        sx={{ display: "flex", gap: "4em" }}>
-          <Box >
-            <Skeleton 
-              variant="rectangular"
-              width={100}
-              height={20}
-            />
-          </Box>
+        sx={{ display: "flex", justifyContent:"end" }}>
           <Box >
             <Skeleton 
               variant="circular"

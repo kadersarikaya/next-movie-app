@@ -59,12 +59,6 @@ const TrendContent = ({type}) => {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
     const [watchLaters, setWatchLaters] = useState([]);
-    const [search, setSearch] = useState('');
-
-    const filteredContent = content.filter((content)=> {
-        const title = content.title || content.name
-        return title.toLowerCase().includes(search.toLowerCase())
-    })
 
     const FetchTrendContent = async () => {
         try {
@@ -80,6 +74,7 @@ const TrendContent = ({type}) => {
             setLoading(false)
         }
     }
+
     useEffect(() => {
         FetchTrendContent()
         const storedWatch = JSON.parse(localStorage.getItem('watchLaters'))
@@ -106,20 +101,8 @@ const TrendContent = ({type}) => {
     return (
         <Box sx={{ width: 1, margin: "20 auto", padding: "1em 5em" }}>
             <Typography sx={{ paddingBottom: 2 }} variant="h5">
-                Trend {type === "movie" ? "Movies" : "TV Shows"} Weekly
-                <Search>
-                    <SearchIconWrapper>
-                        <SearchIcon />
-                    </SearchIconWrapper>
-                    <StyledInputBase
-                        placeholder="Search…"
-                        inputProps={{ 'aria-label': 'search' }}
-                        onChange={(e) => setSearch(e.target.value)}
-                    />
-                </Search>
             </Typography>
-            
-                <Grid container spacing={2}>
+            <Grid container spacing={2}>
                 {loading ?
                     Array.from({ length: 20 }).map((_, index) => {
                         return (
@@ -129,21 +112,21 @@ const TrendContent = ({type}) => {
                             </Grid>
                         )
                     }) :
-                        content?.map((item, index) => (
-                            <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-                                <InfoCard
-                                    key={item.id}
-                                    movie={item}
-                                    loading={loading}
-                                    isWatchLater={isWatchLater}
-                                    handleWatchLater={handleWatchLater}
-                                    handleMovieDetail={handleContentDetail}
-                                    dontShowDetail={false}
-                                />
-                            </Grid>
-                        ))
+                    content?.map((item, index) => (
+                        <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+                            <InfoCard
+                                key={item.id}
+                                movie={item}
+                                loading={loading}
+                                isWatchLater={isWatchLater}
+                                handleWatchLater={handleWatchLater}
+                                handleMovieDetail={handleContentDetail}
+                                dontShowDetail={false}
+                            />
+                        </Grid>
+                    ))
                 }
-                </Grid>
+            </Grid>
         </Box>
     );
 };

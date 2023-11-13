@@ -8,15 +8,20 @@ import InfoCard from "@/components/InfoCard";
 import { useRouter } from "next/navigation";
 import BookmarkOutlinedIcon from '@mui/icons-material/BookmarkOutlined';
 import { Box, Grid } from "@mui/material";
+import LinearProgress from '@mui/material/LinearProgress';
+
 const ContentDetail = ({type}) => {
     const [content, setContent] = useState(null);
     const [recommendations, setRecommendations] = useState([]);
+    const [loading, setLoading] = useState(true);  
+
     const { id } = useParams();
     const router = useRouter();
 
     const handleContentDetail = (id) => {
         router.push(`/${type}/${id}`)
     }
+    
 
     useEffect(() => {
         const fetchContentData = async () => {
@@ -37,12 +42,25 @@ const ContentDetail = ({type}) => {
                 console.error(error);
             }
         }
-        fetchContentData();
-        fetchRecommendations();
+        // Set loading to true before fetching data
+        setLoading(true);
 
+        // Fetch data and recommendations
+        Promise.all([fetchContentData(), fetchRecommendations()])
+            .then(() => {
+                // Set loading to false when data is fetched
+                setLoading(false);
+            })
+            .catch((error) => {
+                console.error(error);
+                // Set loading to false even if there's an error
+                setLoading(false);
+            });
     }, [id, type]);
 
-    if (!content) return <div>Loading...</div>;
+    if (loading) {
+    return <LinearProgress />;
+  }
 
     return (
         <Box sx={{ width: 1, margin: "10 auto", padding: "1em 5em" }}>  
@@ -58,7 +76,7 @@ const ContentDetail = ({type}) => {
                     <p>{content.tagline}</p>
                     <p>{content.overview}</p>
                     <Box sx={{ display:"flex", flexDirection:"row", 
-                    justifyContent:"center"}} >
+                        justifyContent: "center", alignItems: "center"}} >
                         <Chip sx={{ marginRight: 1, }} 
                         label={content.release_date || content.last_air_date} variant="outlined" />
                         <Chip label={content.vote_average.toFixed(1)} />

@@ -17,6 +17,7 @@ import LiveTvIcon from '@mui/icons-material/LiveTv';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import MovieIcon from '@mui/icons-material/Movie';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function DashboardLayout() {
   const router = useRouter();
@@ -99,14 +100,18 @@ export default function DashboardLayout() {
             >
               <MenuIcon />
             </IconButton>
-            <Typography
-              variant="h6"
-              noWrap
-              component="div"
-              sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
-            >
-              Trend Movies & TV Shows
-            </Typography>
+              <Typography
+                onClick={() => router.push('/')}
+                variant="h6"
+                noWrap
+                component="div"
+                sx={{ flexGrow: 1, 
+                cursor: 'pointer',
+                color: "white",
+                display: { xs: 'none', sm: 'block' } }}
+              >
+                Trend Movies & TV Shows
+              </Typography>
           </Toolbar>
         </AppBar>
         <SwipeableDrawer
