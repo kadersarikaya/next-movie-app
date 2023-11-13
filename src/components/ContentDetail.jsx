@@ -7,6 +7,7 @@ import Chip from '@mui/material/Chip';
 import InfoCard from "@/components/InfoCard";
 import { useRouter } from "next/navigation";
 import BookmarkOutlinedIcon from '@mui/icons-material/BookmarkOutlined';
+import { Box, Grid } from "@mui/material";
 const ContentDetail = ({type}) => {
     const [content, setContent] = useState(null);
     const [recommendations, setRecommendations] = useState([]);
@@ -39,56 +40,49 @@ const ContentDetail = ({type}) => {
         fetchContentData();
         fetchRecommendations();
 
-    }, [id]);
+    }, [id, type]);
 
     if (!content) return <div>Loading...</div>;
 
     return (
-        <div style={{
-            margin: "3rem auto",
-            width: "80%",
-        }} >
-            <div style={{
-                display: "flex",
-                gap: "1rem",
-            }} >
+        <Box sx={{ width: 1, margin: "10 auto", padding: "1em 5em" }}>  
+            <Box sx={{ display: "flex", justifyContent: "center", gap: "1em",
+            alignItems: "center", flexWrap:"wrap" }}>     
                 {content.poster_path ?
-                    <img style={
-                        { width: "30%", borderRadius: "10px" }
-                    } src={`https://image.tmdb.org/t/p/w500/${content.poster_path}`} alt={content.title} />
-                    : <img style={
-                        { width: "30%", borderRadius: "10px" }
-                    }
-                        src="https://via.placeholder.com/500x750" alt="placeholder" />}
-                <div className="">
-                    <Stack sx={
-                        { width: "80%", }
-                    } spacing={2}>
-                        <h1>{content.title || content.name}</h1>
-                        <p>{content.tagline}</p>
-                        <p>{content.overview}</p>
-                        <Stack direction="row" spacing={1}>
-                            <Chip label={content.release_date || content.last_air_date} variant="outlined" />
-                            <Chip label={content.vote_average.toFixed(1)} />
-                        </Stack>
-                    </Stack>
-                </div>
-            </div>
+                    <img style={{borderRadius:10, marginBottom: 10}} src={`https://image.tmdb.org/t/p/w500/${content.poster_path}`} alt={content.title} />
+                    : <img style={{ borderRadius: 10, marginBottom: 10 }} src="https://via.placeholder.com/500x750" alt="placeholder" />}
+                <Stack sx={{textAlign:"center", 
+                width:  { xs: '100%', sm: '100%', md: '50%', lg: '50%' }
+                }} spacing={2}>
+                    <h1>{content.title || content.name}</h1>
+                    <p>{content.tagline}</p>
+                    <p>{content.overview}</p>
+                    <Box sx={{ display:"flex", flexDirection:"row", 
+                    justifyContent:"center"}} >
+                        <Chip sx={{ marginRight: 1, }} 
+                        label={content.release_date || content.last_air_date} variant="outlined" />
+                        <Chip label={content.vote_average.toFixed(1)} />
+                    </Box>
+                </Stack>
+            </Box> 
+
             {recommendations.length > 0 &&
-                <Stack sx={{ marginY: "3em" }} spacing={2} className="">
-                    <h2>Recommendations</h2>
-                    <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", }} >
+                <Stack sx={{ marginY: "3em" }} className="">
+                    <h2 style={{paddingBottom: 10}} >Recommendations</h2>
+                    <Grid container spacing={2}>
                         {recommendations?.map((item) => (
-                            <InfoCard
-                                key={item.id}
-                                movie={item}
-                                handleMovieDetail={handleContentDetail}
-                            />
+                            <Grid item  xs={12} sm={6} md={4} lg={3} >
+                                <InfoCard
+                                    key={item.id}
+                                    movie={item}
+                                    handleMovieDetail={handleContentDetail}
+                                />
+                            </Grid>
                         ))}
-                    </div>
+                    </Grid>
                 </Stack>
             }
-        </div>
+        </Box>
     );
 };
 

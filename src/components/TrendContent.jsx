@@ -5,10 +5,11 @@ import { useEffect, useState } from 'react';
 import InfoCard from "./InfoCard";
 import Box from '@mui/material/Box';
 import { useRouter } from "next/navigation";
-import { Typography, Stack } from "@mui/material";
+import { Typography, Stack, Grid } from "@mui/material";
 import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 import SearchIcon from '@mui/icons-material/Search';
+import IsSkeleton from "./IsSkeleton";
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -55,7 +56,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 const TrendContent = ({type}) => {
     const router = useRouter();
     const [content, setContent] = useState([])
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
     const [watchLaters, setWatchLaters] = useState([]);
     const [search, setSearch] = useState('');
@@ -66,23 +67,21 @@ const TrendContent = ({type}) => {
     })
 
     const FetchTrendContent = async () => {
-        setLoading(true)
-        getTrendMovies(type)
-            .then((response) => {
-                setContent(response)
-            })
-            .catch((error) => {
-                setError(error.message || 'Something went wrong')
-            })
-            .finally(() => {
-                setTimeout(() => {
-                    setLoading(false)
-                }, 1000)
-            })
+        try {
+            setLoading(true)
+            const response = await getTrendMovies(type)
+            setContent(response)
+            setLoading(false)
+        } catch (error) {
+            setError(error)
+            setLoading(false)
+        }
+        finally {
+            setLoading(false)
+        }
     }
     useEffect(() => {
         FetchTrendContent()
-
         const storedWatch = JSON.parse(localStorage.getItem('watchLaters'))
         if (storedWatch) {
             setWatchLaters(storedWatch)
@@ -119,23 +118,32 @@ const TrendContent = ({type}) => {
                     />
                 </Search>
             </Typography>
-            <Box display="grid" gridTemplateColumns="repeat(12, 1fr)" gap={2}>
-                {content &&
-                    filteredContent?.map((item) => (
-                        <Box gridColumn="span 4">
-                            <InfoCard
-                                key={item.id}
-                                movie={item}
-                                loading={loading}
-                                isWatchLater={isWatchLater}
-                                handleWatchLater={handleWatchLater}
-                                handleMovieDetail={handleContentDetail}
-                                dontShowDetail={false}
-                            />
-                        </Box>
-                ))
+            
+                <Grid container spacing={2}>
+                {loading ?
+                    Array.from({ length: 20 }).map((_, index) => {
+                        return (
+                            <Grid item xs={12} sm={6} md={4} lg={3} 
+                            key={index}>
+                                <IsSkeleton key={index} />
+                            </Grid>
+                        )
+                    }) :
+                        content?.map((item, index) => (
+                            <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+                                <InfoCard
+                                    key={item.id}
+                                    movie={item}
+                                    loading={loading}
+                                    isWatchLater={isWatchLater}
+                                    handleWatchLater={handleWatchLater}
+                                    handleMovieDetail={handleContentDetail}
+                                    dontShowDetail={false}
+                                />
+                            </Grid>
+                        ))
                 }
-            </Box>
+                </Grid>
         </Box>
     );
 };

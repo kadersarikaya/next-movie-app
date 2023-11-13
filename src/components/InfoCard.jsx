@@ -18,7 +18,6 @@ const InfoCard = ({
   return (
     <>
       <Card key={movie.id} sx={{ maxWidth: 345 }}>
-        <IsSkeleton loading={loading} variant="rectangular" width={345} height={500}>
           {movie.poster_path ?
             <CardMedia
             component="img"
@@ -36,23 +35,17 @@ const InfoCard = ({
             image="https://via.placeholder.com/500x750"
           />
           }
-        </IsSkeleton>
         <CardContent>
-          <IsSkeleton loading={loading} variant="text" width={250} height={50}>
             <Typography gutterBottom variant="h5" component="div">
               {
                 movie.title || movie.name
               }
             </Typography>
-          </IsSkeleton>
-          <IsSkeleton loading={loading} variant="text" width={300} height={100}>
             <Typography variant="body2" color="text.secondary">
               {movie.overview.slice(0, 100)}... (Read More)
             </Typography>
-          </IsSkeleton>
         </CardContent>
         <CardActions sx={{display:'flex', justifyContent:'space-between' }} >
-          <IsSkeleton loading={loading} variant="rounded" width={70} height={30}>
             {!dontShowDetail &&
               <Button 
               size="small"
@@ -60,15 +53,12 @@ const InfoCard = ({
             >Learn More
             </Button>
             }
-          </IsSkeleton>
-          <IsSkeleton loading={loading} variant="circular" width={40} height={40}>
             {isWatchLater && (
               <BookmarkOutlinedIcon 
                 onClick={() => handleWatchLater(movie.id)}
                 color={isWatchLater(movie.id) ? 'error' : 'disabled'}
               />
             )}
-          </IsSkeleton>
         </CardActions>
       </Card>
     </>

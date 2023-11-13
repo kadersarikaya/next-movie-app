@@ -1,20 +1,41 @@
-import PropTypes from 'prop-types';
-import { Skeleton } from '@mui/material';
+import { Grid, Skeleton, Stack, Box } from '@mui/material';
 
-const IsSkeleton = ({ loading, variant, width, height, children }) => {
-  if (loading) {
+const IsSkeleton = () => {
     return (
-    <Skeleton variant={variant} width={width} height={height} />
+      <Box>
+        <Skeleton 
+          variant="rectangular"
+          width={330}
+          height={500}
+        />
+        <Skeleton 
+          variant="text"
+          width={200}
+          height={30}
+        />
+        <Skeleton 
+          variant="text"
+          width={200}
+          height={50}
+        />
+        <Box
+        sx={{ display: "flex", gap: "4em" }}>
+          <Box >
+            <Skeleton 
+              variant="rectangular"
+              width={100}
+              height={20}
+            />
+          </Box>
+          <Box >
+            <Skeleton 
+              variant="circular"
+              width={20}
+              height={20}
+            />
+          </Box>
+        </Box>
+      </Box>
     )
-  }
-  return children;
 };
-IsSkeleton.propTypes = {
-  loading: PropTypes.bool.isRequired,
-  variant: PropTypes.string,
-  width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-  height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-  children: PropTypes.node.isRequired,
-};
-
 export default IsSkeleton;

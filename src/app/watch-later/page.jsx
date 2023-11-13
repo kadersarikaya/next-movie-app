@@ -4,6 +4,7 @@ import { Typography, Stack } from "@mui/material";
 import InfoCard from "@/components/InfoCard";
 import Box from '@mui/material/Box';
 import { getTrendMovies } from "../api";
+import Grid from '@mui/material/Grid';
 
 const WatchLater = () => {
   const [watchLaters, setWatchLaters] = useState([]);
@@ -52,18 +53,18 @@ const WatchLater = () => {
      spacing={2}>
       <Typography variant="h5">Your Watch List</Typography>
       <Typography> Total: {watchMovieCount}</Typography>
-      <Box 
-        sx={{ display: "flex", flexWrap: "wrap", justifyContent: "start", gap: "1em" }}  
-      >
+      <Grid container spacing={2} >
         {FavoriteMovies.map((id) => (
-          <InfoCard
-            movie={id}
-            isWatchLater={isWatchLater}
-            handleWatchLater={handleWatchLater}
-            dontShowDetail={true}
-          />
+          <Grid item xs={12} sm={6} md={4} lg={3} key={id}>
+            <InfoCard
+              movie={id}
+              isWatchLater={isWatchLater}
+              handleWatchLater={handleWatchLater}
+              dontShowDetail={true}
+            />
+          </Grid>
         ))}
-      </Box>
+      </Grid>
     </Stack>
   );
 };

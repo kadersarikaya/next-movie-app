@@ -95,16 +95,9 @@ export default function DashboardLayout() {
               color="inherit"
               aria-label="open drawer"
               sx={{ mr: 2 }}
+              onClick={toggleDrawer('left', true)}
             >
-              <MenuIcon onClick={toggleDrawer('left', true)} />
-              <SwipeableDrawer
-                anchor={'left'}
-                open={state['left']}
-                onClose={toggleDrawer('left', false)}
-                onOpen={toggleDrawer('left', true)}
-              >
-                {list('left')}
-              </SwipeableDrawer>
+              <MenuIcon />
             </IconButton>
             <Typography
               variant="h6"
@@ -114,9 +107,16 @@ export default function DashboardLayout() {
             >
               Trend Movies & TV Shows
             </Typography>
-            
           </Toolbar>
         </AppBar>
+        <SwipeableDrawer
+          anchor={'left'}
+          open={state['left']}
+          onClose={toggleDrawer('left', false)}
+          onOpen={toggleDrawer('left', true)}
+        >
+          {list('left')}
+        </SwipeableDrawer>
       </Box>
     </>
   );
