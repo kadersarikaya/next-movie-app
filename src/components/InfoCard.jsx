@@ -5,23 +5,38 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import IsSkeleton from "./IsSkeleton";
 import BookmarkOutlinedIcon from '@mui/icons-material/BookmarkOutlined';
+import Rating from '@mui/material/Rating';
+
 const InfoCard = ({ 
   movie,
-  loading,
   handleMovieDetail,
   handleWatchLater,
   isWatchLater,
   dontShowDetail
 }) => {
+
   return (
     <>
-      <Card key={movie.id} sx={{ maxWidth: "100%" }} md={{
+      <Card key={movie.id} 
+      sx={{ maxWidth: "100%",
+      position:"relative",
+      }} md={{
         maxWidth: 345,
       }}>
+        <Rating 
+        sx={{
+          position:"absolute",
+          top:0,
+          right:0,
+          margin: "0.5rem",
+         }} name="read-only" 
+          value={parseFloat(movie.vote_average / 2).toFixed(1)} 
+         readOnly />
           {movie.poster_path ?
             <CardMedia
+            sx={{
+          }}
             component="img"
             alt="green iguana"
             width={345}
@@ -55,12 +70,10 @@ const InfoCard = ({
             >Learn More
             </Button>
             }
-            {isWatchLater && (
               <BookmarkOutlinedIcon 
-                onClick={() => handleWatchLater(movie.id)}
-                color={isWatchLater(movie.id) ? 'error' : 'disabled'}
+                onClick={handleWatchLater}
+                color={isWatchLater ? 'error' : 'disabled'}
               />
-            )}
         </CardActions>
       </Card>
     </>

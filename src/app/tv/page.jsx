@@ -3,9 +3,7 @@ import TrendContent from "@/components/TrendContent";
 
 const Tv = () => {
   return <div>
-    <TrendContent 
-    type="tv"
-    />
+    <TrendContent type="tv"/>
   </div>;
 };
 

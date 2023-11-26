@@ -1,6 +1,6 @@
 "use client"
 import React from "react";
-import { getTrendMovies } from "@/app/api";
+import { getTrendMovies, searchMovies } from "../utils/api";
 import { useEffect, useState } from 'react';
 import InfoCard from "./InfoCard";
 import Box from '@mui/material/Box';
@@ -10,6 +10,8 @@ import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 import SearchIcon from '@mui/icons-material/Search';
 import IsSkeleton from "./IsSkeleton";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleFavorite } from "@/redux/favoritesSlice";
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -58,7 +60,10 @@ const TrendContent = ({type}) => {
     const [content, setContent] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
-    const [watchLaters, setWatchLaters] = useState([]);
+    const [query, setQuery] = useState("")
+    const [queryLoading, setQueryLoading] = useState(false);
+    const dispatch = useDispatch()
+    const favorites = useSelector((state) => state.favorites);
 
     const FetchTrendContent = async () => {
         try {
@@ -75,28 +80,36 @@ const TrendContent = ({type}) => {
         }
     }
 
+    const fetchSearch = async () => {
+        try {
+            setQueryLoading(true)
+            const response = await searchMovies(type, query)
+            if(query) {
+                setContent(response)
+            }
+            setQueryLoading(false)
+        }
+        catch (error) {
+            console.log(error)
+        }
+    }
+
     useEffect(() => {
         FetchTrendContent()
-        const storedWatch = JSON.parse(localStorage.getItem('watchLaters'))
-        if (storedWatch) {
-            setWatchLaters(storedWatch)
-        }
     }, [type])
+
+    useEffect(() => {
+        fetchSearch()
+    }, [query])
+
+    const handleFavoriteToggle = (id) => {
+        dispatch(toggleFavorite({id}))
+    }
 
     const handleContentDetail = (id) => {
         router.push(`/${type}/${id}`)
     }
 
-    const handleWatchLater = (id) => {
-        const newWatchLaters = watchLaters.includes(id)
-            ? watchLaters.filter((movieId) => movieId !== id)
-            : [...watchLaters, id];
-
-        setWatchLaters(newWatchLaters);
-        localStorage.setItem('watchLaters', JSON.stringify(newWatchLaters))
-    }
-
-    const isWatchLater = (id) => watchLaters.includes(id)
 
     return (
         <Box sx={
@@ -109,7 +122,23 @@ const TrendContent = ({type}) => {
                 minHeight: '100vh'
             }
         } >
-            <Grid container spacing={2}>
+            <Stack direction="row" spacing={2} sx={{ marginBottom: 2 }}>
+                <Typography variant="h4" component="div" sx={{ flexGrow: 1, color: '#fff' }}>
+                    Trending {type === 'movie' ? 'Movies' : 'TV Shows'}
+                </Typography>
+                <Search>
+                    <SearchIconWrapper>
+                        <SearchIcon />
+                    </SearchIconWrapper>
+                    <StyledInputBase
+                        onChange={(e) => setQuery(e.target.value)}
+                        placeholder="Search…"
+                        inputProps={{ 'aria-label': 'search' }}
+                    />
+                </Search>
+            </Stack>
+            
+            <Grid container spacing={2}>                
                 {loading ?
                     Array.from({ length: 20 }).map((_, index) => {
                         return (
@@ -125,8 +154,8 @@ const TrendContent = ({type}) => {
                                 key={item.id}
                                 movie={item}
                                 loading={loading}
-                                isWatchLater={isWatchLater}
-                                handleWatchLater={handleWatchLater}
+                                isWatchLater={favorites[item.id] || false}
+                                handleWatchLater={() => handleFavoriteToggle(item.id)}
                                 handleMovieDetail={handleContentDetail}
                                 dontShowDetail={false}
                             />

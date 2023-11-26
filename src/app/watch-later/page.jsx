@@ -2,50 +2,48 @@
 import React, {useState, useEffect, useCallback, useMemo} from "react";
 import { Typography, Stack } from "@mui/material";
 import InfoCard from "@/components/InfoCard";
-import Box from '@mui/material/Box';
-import { getTrendMovies } from "../api";
+import { getTrendMovies } from "@/utils/api";
 import Grid from '@mui/material/Grid';
+import { useSelector, useDispatch} from "react-redux";
+import { toggleFavorite } from "@/redux/favoritesSlice";
 
 const WatchLater = () => {
-  const [watchLaters, setWatchLaters] = useState([]);
   const [movies, setMovies] = useState([])
   const [tvs, setTvs] = useState([])
+  const dispatch = useDispatch()
 
+  const favorites = useSelector((state) => state.favorites)
+  
   useEffect(() => {
-    getTrendMovies('movie').then((response) => {
-      setMovies(response)
-    })
-    getTrendMovies('tv').then((response) => {
-      setTvs(response)
-    })
-    const storedWatchLaters = JSON.parse(localStorage.getItem('watchLaters'));
-    if (storedWatchLaters) {
-      setWatchLaters(storedWatchLaters);
+    const fetchMovies = async () => {
+      const movieResponse = await getTrendMovies('movie');
+      setMovies(movieResponse);
+    };
+
+    const fetchTVs = async () => {
+      const tvResponse = await getTrendMovies('tv');
+      setTvs(tvResponse)
     }
+    fetchMovies()
+    fetchTVs()
   }, [])
 
   const allContent = useMemo(() => {
     return [...movies, ...tvs];
   }, [movies, tvs])
   
-   const handleWatchLater = (id) => {
-    const newWatchLaters = watchLaters.includes(id)
-      ? watchLaters.filter((movieId) => movieId !== id)
-      : [...watchLaters, id];
 
-    setWatchLaters(newWatchLaters);
-    localStorage.setItem('watchLaters', JSON.stringify(newWatchLaters))
-  }
-
-   const isWatchLater = (id) => watchLaters.includes(id)
-
-  const FavoriteMovies = allContent.filter(
-    (movie) => watchLaters.includes(movie.id)
-  )
+  const favoriteMovies = useMemo(() => {
+    return allContent.filter((content) => favorites[content.id]);
+  }, [allContent, favorites])
 
   const watchMovieCount = useMemo(() => {
-    return watchLaters.length;
-  }, [watchLaters]);
+    return favoriteMovies.length;
+  }, [favoriteMovies]);
+
+  const handleFavoriteToggle = (id) => {
+    dispatch(toggleFavorite({ id }))
+  }
 
   return (
     <Stack
@@ -62,12 +60,12 @@ const WatchLater = () => {
       <Typography variant="h5">Your Watch List</Typography>
       <Typography> Total: {watchMovieCount}</Typography>
       <Grid container spacing={2} >
-        {FavoriteMovies.map((id) => (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={id}>
+        {favoriteMovies.map((fav) => (
+          <Grid item xs={12} sm={6} md={4} lg={3} key={fav.id}>
             <InfoCard
-              movie={id}
-              isWatchLater={isWatchLater}
-              handleWatchLater={handleWatchLater}
+              movie={fav}
+              handleWatchLater={() => handleFavoriteToggle(fav.id)}
+              isWatchLater={favorites[fav.id] || false}
               dontShowDetail={true}
             />
           </Grid>
